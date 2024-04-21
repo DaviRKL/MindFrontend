@@ -4,6 +4,7 @@ import axios from "axios";
 import {FaTrash, FaEdit } from "react-icons/fa";
 import {toast} from "react-toastify";
 
+
 const Table = styled.table`\
     width: 100%;
     background-color: #fff;
@@ -36,20 +37,33 @@ export const Td = styled.td`
    
 `;
 
-interface User {
-    id: number;
-    name: string;
-    email: string;
-    
-  }
-const Grid = ({users}: {users: User[]}) => {
+const Grid = ({users, setUsers, setOnEdit}: any) => {
+
+    const handleEdit = (item: any) => {
+        setOnEdit(item);
+    };
+
+    const handleDelete = async (id: any) => {
+        await axios
+        .delete("http://localhost:8900/" + id)
+        .then(({data}) => {
+            const newArray: any = users.filter((user:any)=> user.id !== id);
+
+            setUsers(newArray);
+            toast.success(data);
+        })
+        .catch(({data}) => toast.error(data));
+
+     setOnEdit(null);
+
+    }
+
     return (
         <Table>
             <Thead>
                 <Tr>
                     <Th>Nome</Th>
                     <Th>Email</Th>
-                    <Th>Fone</Th>
                     <Th></Th>
                     <Th></Th>
                 </Tr>
@@ -57,15 +71,17 @@ const Grid = ({users}: {users: User[]}) => {
             <Tbody>
                 {users.map((item: any, i:number) => (
                     <Tr key ={i}>
-                        <Td width="30%">{item.Nome}</Td>
-                        <Td width="30%">{item.Email}</Td>
-                        <Td width="20%">{item.fone}</Td>
+                        <Td width="40%">{item.Nome}</Td>
+                        <Td width="40%">{item.Email}</Td>
                         <Td  width="5%">
-                            <FaEdit />
+                            <div onClick={() => handleEdit(item)}>
+                                <FaEdit />
+                            </div>  
                         </Td>
                         <Td width="5%">
-                            <FaTrash  />
-                            {/* onClick={() => handleDelete(item.id)} */}
+                            <div onClick={() => handleDelete(item.id)} >
+                                <FaTrash/>
+                            </div>   
                         </Td>
                     </Tr>
                 ))}

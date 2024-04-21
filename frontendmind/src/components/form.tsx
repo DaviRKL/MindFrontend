@@ -1,6 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+
 
 
  const FormContainer = styled.form`
@@ -40,25 +43,69 @@ import { useRef } from "react";
     height: 42px;
 `;
 
-const Form: React.FC = () => {
-    const ref = useRef(null);
+const Form = ({ onEdit, setOnEdit, getUsers}:any) => {
+    const ref = useRef();
+    useEffect(() => {
+        if (onEdit){
+            const user: any  = ref.current;
+    
+            user.Nome.value = onEdit.Nome;
+            user.Email.value = onEdit.Email;
+            user.Senha.value = onEdit.Senha;
+        
+        }
+    }, [onEdit]);
+
+    const handleSubmit = async (e:any) => {
+        e.preventDefault();
+        const user: any  = ref.current;
+        if ( !user.Nome.value  ||  !user.Email.value || !user.Senha.value) {
+            return toast.warn("Preencha todos os campos!");
+        }
+
+        if (onEdit) {
+            await axios
+            .put("http://localhost:8900/" + onEdit.id, {
+               Nome: user.Nome.value,
+               Email: user.Email.value, 
+               Senha: user.Senha.value 
+            })
+            .then(({data}) =>toast.success(data))
+            .catch(({data}) =>toast.error(data));
+        }
+
+        else {
+            await axios
+            .post("http://localhost:8900",{
+                Nome: user.Nome.value ,
+                Email: user.Email.value,
+                Senha: user.Senha.value
+            })
+            .then(({data}) =>toast.success(data))
+            .catch(({data}) =>toast.error(data));
+        }
+        user.Nome.value = "";
+        user.Email.value =  "";
+        user.Senha.value =  "";
+
+        setOnEdit(null);
+        getUsers();
+    };
+   
+    
     return (
-        <FormContainer ref={ref}>
+        <FormContainer ref={ref} onSubmit={handleSubmit}>
             <InputArea>
             <Label>Nome</Label>
-            <Input name = "nome"/>
+            <Input name = "Nome"/>
             </InputArea>
             <InputArea>
             <Label>Email</Label>
-            <Input name="email" type="email"/>
+            <Input name="Email" type="Email"/>
             </InputArea>
             <InputArea>
-            <Label>Telefone</Label>
-            <Input name="fone"/>
-            </InputArea>
-            <InputArea>
-            <Label>Data de Nascimento</Label>
-            <Input name="data_nascimento" type="date"/>
+            <Label>Senha</Label>
+            <Input name="Senha" type="password"/>
             </InputArea>
             <Button type="submit">SALVAR</Button>
       </FormContainer>
