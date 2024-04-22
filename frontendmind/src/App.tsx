@@ -3,14 +3,13 @@ import styled from "styled-components";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Form from "./components/form";
-
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Grid from "./components/grid";
 
 const Container = styled.div`
   width: 100%;
-  max-width: 800px;
+  max-width: 1000px;
   margin-top: 200px;
   display: flex;
   flex-direction: column;
@@ -24,34 +23,32 @@ const Container = styled.div`
 
 function App() {
   
-  const [users, setUsers] = useState([]);
+  const [produtos, setProdutos] = useState([]);
   const [onEdit, setOnEdit] = useState(null);
 
-  const getUsers = async () => {
+  const getProdutos = async () => {
     try {
-      const res = await axios.get("http://localhost:8900");
-      setUsers(res.data.sort((a: any, b: any) => (a.nome > b.nome ? 1 : -1)));
+      const res = await axios.get("http://localhost:8900/");
+      setProdutos(res.data.sort((a:any, b:any) => (a.nome > b.nome ? 1 : -1)));
     } catch (error) {
       toast.error(error);
     }
   };
 
   useEffect(() => {
-    getUsers();
-  }, [setUsers]);
+    getProdutos();
+  }, []);
 
   return (
     <>
       <Container>
-        <Title>USUÁRIOS</Title>
-        <Form onEdit={onEdit} setOnEdit= {setOnEdit} getUsers={getUsers} />
-        {/* <Grid users={users} setUsers={setUsers} setOnEdit= {setOnEdit}/> */}
-        <Grid users={users} setUsers={setUsers} setOnEdit={setOnEdit} />
+        <Title>PRODUTOS</Title>
+        <Form onEdit={onEdit} setOnEdit={setOnEdit} getProdutos={getProdutos} />
+        <Grid produtos={produtos} setProdutos={setProdutos} setOnEdit={setOnEdit} />
       </Container>
       <ToastContainer autoClose={3000} />
       <GlobalStyle />
     </>
-
   );
 }
 

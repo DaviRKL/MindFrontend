@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import axios from "axios";
-import {FaTrash, FaEdit } from "react-icons/fa";
+import {FaTrash, FaEdit, FaEye } from "react-icons/fa";
 import {toast} from "react-toastify";
 
 
@@ -21,6 +21,8 @@ export const Tbody = styled.tbody``;
 
 export const Tr = styled.tr``;
 
+export const Img = styled.img``;
+
 export const Th = styled.th`
     text-align: start;
     border-bottom: inset;
@@ -32,12 +34,10 @@ export const Th = styled.th`
 export const Td = styled.td`
     padding-top: 15px;
     text-align: ${(props) => (props.alignCenter ? "center" : "start")};
-    width: ${(props) => (props.width ? props.width : "auto")};
-  
-   
+    width: ${(props) => (props.width ? props.width : "auto")}; 
 `;
 
-const Grid = ({users, setUsers, setOnEdit}: any) => {
+const Grid = ({produtos, setProdutos, setOnEdit}: any) => {
 
     const handleEdit = (item: any) => {
         setOnEdit(item);
@@ -47,9 +47,8 @@ const Grid = ({users, setUsers, setOnEdit}: any) => {
         await axios
         .delete("http://localhost:8900/" + id)
         .then(({data}) => {
-            const newArray: any = users.filter((user:any)=> user.id !== id);
-
-            setUsers(newArray);
+            const newArray: any = produtos.filter((user:any)=> user.id !== id);
+            setProdutos(newArray);
             toast.success(data);
         })
         .catch(({data}) => toast.error(data));
@@ -62,17 +61,27 @@ const Grid = ({users, setUsers, setOnEdit}: any) => {
         <Table>
             <Thead>
                 <Tr>
-                    <Th>Nome</Th>
-                    <Th>Email</Th>
-                    <Th></Th>
-                    <Th></Th>
+                    <Th width="30%"></Th>
+                    <Th width="5%">ID</Th>
+                    <Th width="40%">Nome</Th>
+                    <Th width="10%">QTD</Th>
+                    <Th width="5%"></Th>
+                    <Th width="5%"></Th>
+                    <Th width="5%"></Th>
                 </Tr>
             </Thead>
             <Tbody>
-                {users.map((item: any, i:number) => (
+                {produtos.map((item: any, i:number) => (
                     <Tr key ={i}>
+                        <Td width="30%"><Img src={"http://localhost:8900/imagens/" + item.Imagem}></Img></Td>
+                        <Td width="5%">{item.id}</Td>
                         <Td width="40%">{item.Nome}</Td>
-                        <Td width="40%">{item.Email}</Td>
+                        <Td width="10%">{item.Qtd}</Td>
+                        <Td width="5%">
+                            <div onClick={() => handleEdit(item.id)} >
+                                <FaEye />
+                            </div>   
+                        </Td>
                         <Td  width="5%">
                             <div onClick={() => handleEdit(item)}>
                                 <FaEdit />
