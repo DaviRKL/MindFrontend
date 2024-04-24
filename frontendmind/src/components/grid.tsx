@@ -3,9 +3,12 @@ import styled from "styled-components";
 import axios from "axios";
 import {FaTrash, FaEdit, FaEye } from "react-icons/fa";
 import {toast} from "react-toastify";
+import { Link } from "react-router-dom";
+import { useState } from "react";
 
 
-const Table = styled.table`\
+
+export const Table = styled.table`\
     width: 100%;
     background-color: #fff;
     padding: 20px;
@@ -36,6 +39,16 @@ export const Td = styled.td`
     text-align: ${(props) => (props.alignCenter ? "center" : "start")};
     width: ${(props) => (props.width ? props.width : "auto")}; 
 `;
+// const [imagemUrl, setImagemUrl] = useState<any>("");
+
+// const getFoto = async () => {
+//   try {
+//     const imagemRes = await axios.get(`http://localhost:8900/imagens/${produto.Imagem}`);
+//     setImagemUrl(imagemRes.config.url); // Armazenando a URL da imagem
+//   } catch (error) {
+//     toast.error(error);
+//   }
+// };
 
 const Grid = ({produtos, setProdutos, setOnEdit}: any) => {
 
@@ -71,16 +84,19 @@ const Grid = ({produtos, setProdutos, setOnEdit}: any) => {
                 </Tr>
             </Thead>
             <Tbody>
+                
                 {produtos.map((item: any, i:number) => (
+                   
+                
                     <Tr key ={i}>
-                        <Td width="30%"><Img src={"http://localhost:8900/imagens/" + item.Imagem}></Img></Td>
+                        <Td width="30%"><Img src={`http://localhost:8900/imagens/${item.Imagem}`}></Img></Td>
                         <Td width="5%">{item.id}</Td>
                         <Td width="40%">{item.Nome}</Td>
                         <Td width="10%">{item.Qtd}</Td>
                         <Td width="5%">
-                            <div onClick={() => handleEdit(item.id)} >
-                                <FaEye />
-                            </div>   
+                        <Link to={`/viewProduto/${item.id}`}>
+                             <FaEye />
+                        </Link>
                         </Td>
                         <Td  width="5%">
                             <div onClick={() => handleEdit(item)}>
